@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Tableau de Bord - صحة صغيري{% endblock %}
+
+{% block content %}
+<section class="container" style="margin-top: 40px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h2>Bonjour, {{ nom }} 👋</h2>
+        <a href="{{ url_for('deconnexion') }}" class="btn btn-outline" style="border-color: #ef4444; color: #ef4444 !important;">Se déconnecter</a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+        
+        <!-- CARTE 1 : CARNET DE SANTÉ -->
+        <div style="background: white; padding: 24px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+            <h3>👶 Carnet de Santé</h3>
+            
+            {% if enfants %}
+                <div style="margin: 15px 0;">
+                    {% for enfant in enfants %}
+                        <!-- Lien cliquable vers la page de suivi de l'enfant -->
+                        <a href="{{ url_for('suivi_enfant', enfant_id=enfant.id) }}" style="text-decoration: none; color: inherit; display: block; margin-bottom: 10px;">
+                            <div style="padding: 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; transition: background 0.2s;">
+                                <strong>{{ enfant.prenom }} {{ enfant.nom }}</strong> ({{ enfant.sexe }})
+                                <div style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">
+                                    Né(e) le : {{ enfant.date_naissance }} <br>
+                                    {% if enfant.poids %}Poids: {{ enfant.poids }} kg{% endif %}
+                                    {% if enfant.taille %}| Taille: {{ enfant.taille }} cm{% endif %}
+                                </div>
+                                <span style="font-size: 0.8rem; color: #2563eb; font-weight: 500; display: inline-block; margin-top: 6px;">Voir le carnet de santé →</span>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p style="color: #64748b; margin: 15px 0;">Aucun enfant enregistré pour le moment.</p>
+            {% endif %}
+
+            <!-- Bouton d'ajout -->
+            <a href="{{ url_for('ajouter_enfant') }}" class="btn btn-primary" style="width: 100%; text-align: center; display: block; text-decoration: none; box-sizing: border-box;">+ Ajouter un enfant</a>
+        </div>
+
+       <!-- CARTE 2 : ASSISTANT IA -->
+<div style="background: white; padding: 24px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+    <h3>🤖 Assistant Pédiatrique (IA)</h3>
+    <p style="color: #64748b; margin: 15px 0;">Posez vos questions sur la santé et la nutrition de votre enfant à notre assistant intelligent.</p>
+    
+    <!-- C'est cette balise <a> qui fait office de lien cliquable -->
+    <a href="{{ url_for('chat_page') }}" class="btn btn-primary" style="width: 100%; text-align: center; display: block; text-decoration: none; box-sizing: border-box;">
+        Démarrer une discussion
+    </a>
+</div>
+
+        <!-- CARTE 3 : CONSULTATION -->
+        <div style="background: white; padding: 24px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+            <h3>🩺 Demander une Consultation</h3>
+            <p style="color: #64748b; margin: 15px 0;">Consultez la liste des pédiatres partenaires et planifiez un rendez-vous en ligne.</p>
+            <a href="{{ url_for('liste_medecins') }}" class="btn btn-primary" style="width: 100%; text-align: center; display: block; text-decoration: none; box-sizing: border-box;">Trouver un médecin</a>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,385 @@
+{% extends "base.html" %}
+
+{% block title %}Ordonnance - صحة صغيري{% endblock %}
+
+{% block content %}
+
+<div class="container" style="max-width: 850px; margin-top: 40px; margin-bottom: 40px;">
+
+    <div style="
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    ">
+
+        <!-- ========================================== -->
+        <!-- HEADER -->
+        <!-- ========================================== -->
+
+        <div style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 15px;
+        ">
+
+            <div>
+
+                <h2 style="margin: 0;">
+                    💊 Ordonnance médicale
+                </h2>
+
+                <p style="
+                    margin-top: 8px;
+                    color: #64748b;
+                ">
+                    Date : {{ ordonnance.date_creation }}
+                </p>
+
+            </div>
+
+
+            <!-- BOUTON RETOUR -->
+
+            {% if session.get('user_role') == 'medecin' %}
+
+                <a
+                    href="{{ url_for('dossier_patient', id=enfant.id) }}"
+                    class="btn btn-outline"
+                    style="text-decoration: none;"
+                >
+                    ← Retour au dossier
+                </a>
+
+            {% else %}
+
+                <a
+                    href="{{ url_for('suivi_enfant', enfant_id=enfant.id) }}"
+                    class="btn btn-outline"
+                    style="text-decoration: none;"
+                >
+                    ← Retour
+                </a>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- INFORMATIONS PATIENT -->
+        <!-- ========================================== -->
+
+        <div style="
+            background: #f8fafc;
+            padding: 18px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px solid #e2e8f0;
+        ">
+
+            <h4 style="margin-top: 0;">
+                👶 Patient
+            </h4>
+
+            <strong>
+                {{ enfant.prenom }} {{ enfant.nom }}
+            </strong>
+
+            <br>
+
+            <span style="color: #64748b;">
+                Date de naissance :
+                {{ enfant.date_naissance }}
+            </span>
+
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- MÉDECIN -->
+        <!-- ========================================== -->
+
+        <div style="margin-bottom: 25px;">
+
+            <strong>👨‍⚕️ Médecin :</strong>
+
+            {% if ordonnance.medecin %}
+
+                {{ ordonnance.medecin.nom_complet }}
+
+            {% else %}
+
+                Non disponible
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- MÉDICAMENTS -->
+        <!-- ========================================== -->
+
+        <h3 style="
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        ">
+            💊 Médicaments prescrits
+        </h3>
+
+
+        {% if ordonnance.lignes %}
+
+            {% for ligne in ordonnance.lignes %}
+
+                <div style="
+                    background: #fdfdfd;
+                    border: 1px solid #e2e8f0;
+                    padding: 20px;
+                    border-radius: 10px;
+                    margin-bottom: 15px;
+                ">
+
+
+                    <!-- ========================================== -->
+                    <!-- NOM DU MÉDICAMENT -->
+                    <!-- ========================================== -->
+
+                    <h4 style="
+                        margin-top: 0;
+                        color: #2563eb;
+                    ">
+                        💊 {{ ligne.nom_medicament }}
+                    </h4>
+
+
+                    <!-- ========================================== -->
+                    <!-- INFORMATIONS DU MÉDICAMENT -->
+                    <!-- ========================================== -->
+
+                    <div style="
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 15px;
+                    ">
+
+
+                        <!-- POSOLOGIE -->
+
+                        <div>
+
+                            <strong>Posologie</strong>
+
+                            <br>
+
+                            {{ ligne.posologie }}
+
+                        </div>
+
+
+                        <!-- FRÉQUENCE -->
+
+                        <div>
+
+                            <strong>Fréquence</strong>
+
+                            <br>
+
+                            {{ ligne.frequence }}
+
+                        </div>
+
+
+                        <!-- DURÉE -->
+
+                        <div>
+
+                            <strong>Durée</strong>
+
+                            <br>
+
+                            {{ ligne.duree }}
+
+                        </div>
+
+
+                        <!-- ========================================== -->
+                        <!-- STATUT DU MÉDICAMENT -->
+                        <!-- ========================================== -->
+
+                        <div>
+
+                            <strong>Statut</strong>
+
+                            <br>
+
+
+                            <!-- ========================================== -->
+                            <!-- SI C'EST LA MAMAN -->
+                            <!-- ========================================== -->
+
+                            {% if session.get('user_role') == 'maman' %}
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('modifier_statut_medicament', ligne_id=ligne.id) }}"
+                                    style="margin-top: 8px;"
+                                >
+
+                                    <select
+                                        name="statut_suivi"
+                                        style="
+                                            padding: 7px 10px;
+                                            border: 1px solid #cbd5e1;
+                                            border-radius: 6px;
+                                            cursor: pointer;
+                                            background: white;
+                                        "
+                                    >
+
+                                        <!-- EN COURS -->
+
+                                        <option
+                                            value="En cours"
+                                            {% if ligne.statut_suivi == 'En cours' %}
+                                                selected
+                                            {% endif %}
+                                        >
+                                            🟢 En cours
+                                        </option>
+
+
+                                        <!-- TERMINÉ -->
+
+                                        <option
+                                            value="Terminé"
+                                            {% if ligne.statut_suivi == 'Terminé' %}
+                                                selected
+                                            {% endif %}
+                                        >
+                                            ✅ Terminé
+                                        </option>
+
+                                    </select>
+
+                                    <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill px-3" style="margin-left: 8px;">
+                                        Mettre à jour
+                                    </button>
+
+                                </form>
+
+
+                            <!-- ========================================== -->
+                            <!-- SI C'EST LE MÉDECIN -->
+                            <!-- ========================================== -->
+
+                            {% else %}
+
+                                {% if ligne.statut_suivi == 'Terminé' %}
+
+                                    <span style="
+                                        color: #16a34a;
+                                        font-weight: 600;
+                                    ">
+                                        ✅ Terminé
+                                    </span>
+
+                                {% else %}
+
+                                    <span style="
+                                        color: #2563eb;
+                                        font-weight: 600;
+                                    ">
+                                        🟢 {{ ligne.statut_suivi }}
+                                    </span>
+
+                                {% endif %}
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ========================================== -->
+                    <!-- INSTRUCTIONS -->
+                    <!-- ========================================== -->
+
+                    {% if ligne.instructions
+                    and ligne.instructions != 'Aucune' %}
+
+                        <div style="
+                            margin-top: 15px;
+                            padding-top: 15px;
+                            border-top: 1px solid #e2e8f0;
+                        ">
+
+                            <strong>
+                                📋 Instructions :
+                            </strong>
+
+                            <br>
+
+                            {{ ligne.instructions }}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- ========================================== -->
+                    <!-- REMARQUE DE LA MAMAN -->
+                    <!-- ========================================== -->
+
+                    {% if ligne.remarque_maman %}
+
+                        <div style="
+                            margin-top: 15px;
+                            background: #f8fafc;
+                            padding: 12px;
+                            border-radius: 6px;
+                        ">
+
+                            <strong>
+                                💬 Remarque de la maman :
+                            </strong>
+
+                            <br>
+
+                            {{ ligne.remarque_maman }}
+
+                        </div>
+
+                    {% endif %}
+
+
+                </div>
+
+            {% endfor %}
+
+
+        {% else %}
+
+            <p style="
+                color: #64748b;
+                text-align: center;
+                padding: 30px;
+            ">
+                Aucun médicament enregistré.
+            </p>
+
+        {% endif %}
+
+
+    </div>
+
+</div>
+
+{% endblock %}

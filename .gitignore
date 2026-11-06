@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+instance/
+*.db
+*.sqlite
+*.sqlite3
+.vscode/
+
+*.code-workspace
+*.ipynb

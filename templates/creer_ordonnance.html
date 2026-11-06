@@ -1,0 +1,406 @@
+{% extends "base.html" %}
+
+{% block title %}Rédiger une Ordonnance - صحة صغيري{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px; margin-top: 40px; margin-bottom: 40px;">
+    
+    <div style="background: white; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+
+        <!-- EN-TÊTE -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <h2>💊 Nouvelle Ordonnance</h2>
+
+            <a href="{{ url_for('dossier_patient', id=enfant.id) }}"
+               class="btn btn-outline"
+               style="text-decoration: none;">
+                ← Retour au dossier
+            </a>
+        </div>
+
+        <!-- INFORMATIONS PATIENT -->
+        <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
+            <strong>Patient :</strong>
+            {{ enfant.prenom }} {{ enfant.nom }}
+            <br>
+
+            <span style="font-size: 0.85rem; color: #64748b;">
+                Né(e) le : {{ enfant.date_naissance }}
+            </span>
+        </div>
+
+        <!-- FORMULAIRE -->
+        <form method="POST">
+
+            <!-- DATE -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 8px;">
+                    Date de l'ordonnance
+                </label>
+
+                <input
+                    type="date"
+                    name="date_creation"
+                    value="{{ today_date }}"
+                    required
+                    style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;"
+                >
+            </div>
+
+            <!-- TITRE -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 25px; margin-bottom: 15px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">
+
+                <h4 style="margin: 0;">
+                    Médicaments prescrits
+                </h4>
+
+            </div>
+
+            <!-- CONTENEUR DES MÉDICAMENTS -->
+            <div id="lignes-medicaments">
+
+                {% for i in range(8) %}
+                <div class="ligne-medoc" style="background: #fdfdfd; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+
+                    <!-- MÉDICAMENT -->
+                    <div style="margin-bottom: 10px;">
+
+                        <label style="font-size: 0.85rem; color: #64748b;">
+                            Médicament
+                        </label>
+
+                        <select
+                            name="nom_medicament[]"
+                            required
+                            style="
+                                width: 100%;
+                                padding: 10px;
+                                border: 1px solid #cbd5e1;
+                                border-radius: 6px;
+                                background: #fff;
+                                margin-bottom: 5px;
+                            "
+                        >
+
+                            <option value="">
+                                -- Sélectionnez un médicament --
+                            </option>
+
+                            <option value="Doliprane Sirop">
+                                Doliprane Sirop
+                            </option>
+
+                            <option value="Advil Nourrissons">
+                                Advil Nourrissons
+                            </option>
+
+                            <option value="Sérum Physiologique">
+                                Sérum Physiologique
+                            </option>
+
+                            <option value="Maxilase Sirop">
+                                Maxilase Sirop
+                            </option>
+
+                            <option value="Smecta Sachets">
+                                Smecta Sachets
+                            </option>
+
+                            <option value="Augmentin Sirop">
+                                Augmentin Sirop
+                            </option>
+
+                            <option value="Autre">
+                                ➕ Autre (saisir manuellement)
+                            </option>
+
+                        </select>
+
+                        <input
+                            type="text"
+                            name="nom_medicament_autre[]"
+                            placeholder="Écrivez le nom du médicament..."
+                            style="
+                                width: 100%;
+                                padding: 8px;
+                                border: 1px solid #cbd5e1;
+                                border-radius: 6px;
+                                background: #f8fafc;
+                            "
+                        >
+
+                    </div>
+
+                    <!-- POSOLOGIE + FRÉQUENCE -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+
+                        <div>
+                            <label style="font-size: 0.85rem; color: #64748b;">
+                                Posologie
+                            </label>
+
+                            <select
+                                name="posologie[]"
+                                required
+                                style="
+                                    width: 100%;
+                                    padding: 10px;
+                                    border: 1px solid #cbd5e1;
+                                    border-radius: 6px;
+                                    background: #fff;
+                                    margin-bottom: 5px;
+                                "
+                            >
+
+                                <option value="">
+                                    -- Dose --
+                                </option>
+
+                                <option value="2.5 ml">
+                                    2.5 ml
+                                </option>
+
+                                <option value="5 ml">
+                                    5 ml
+                                </option>
+
+                                <option value="1 cuillère à café">
+                                    1 cuillère à café
+                                </option>
+
+                                <option value="1 pipette">
+                                    1 pipette
+                                </option>
+
+                                <option value="1 sachet">
+                                    1 sachet
+                                </option>
+
+                                <option value="Autre">
+                                    ➕ Autre
+                                </option>
+
+                            </select>
+
+                            <input
+                                type="text"
+                                name="posologie_autre[]"
+                                placeholder="Précisez la dose..."
+                                style="
+                                    width: 100%;
+                                    padding: 8px;
+                                    border: 1px solid #cbd5e1;
+                                    border-radius: 6px;
+                                    background: #f8fafc;
+                                "
+                            >
+
+                        </div>
+
+                        <div>
+                            <label style="font-size: 0.85rem; color: #64748b;">
+                                Fréquence
+                            </label>
+
+                            <select
+                                name="frequence[]"
+                                required
+                                style="
+                                    width: 100%;
+                                    padding: 10px;
+                                    border: 1px solid #cbd5e1;
+                                    border-radius: 6px;
+                                    background: #fff;
+                                    margin-bottom: 5px;
+                                "
+                            >
+
+                                <option value="">
+                                    -- Fréquence --
+                                </option>
+
+                                <option value="1 fois par jour">
+                                    1 fois par jour
+                                </option>
+
+                                <option value="2 fois par jour">
+                                    2 fois par jour
+                                </option>
+
+                                <option value="3 fois par jour">
+                                    3 fois par jour
+                                </option>
+
+                                <option value="4 fois par jour">
+                                    4 fois par jour
+                                </option>
+
+                                <option value="Si besoin">
+                                    Si besoin
+                                </option>
+
+                                <option value="Autre">
+                                    ➕ Autre
+                                </option>
+
+                            </select>
+
+                            <input
+                                type="text"
+                                name="frequence_autre[]"
+                                placeholder="Précisez la fréquence..."
+                                style="
+                                    width: 100%;
+                                    padding: 8px;
+                                    border: 1px solid #cbd5e1;
+                                    border-radius: 6px;
+                                    background: #f8fafc;
+                                "
+                            >
+
+                        </div>
+
+                    </div>
+
+                    <!-- DURÉE + INSTRUCTIONS -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+
+                        <div>
+                            <label style="font-size: 0.85rem; color: #64748b;">
+                                Durée
+                            </label>
+
+                            <select
+                                name="duree[]"
+                                required
+                                style="
+                                    width: 100%;
+                                    padding: 10px;
+                                    border: 1px solid #cbd5e1;
+                                    border-radius: 6px;
+                                    background: #fff;
+                                    margin-bottom: 5px;
+                                "
+                            >
+
+                                <option value="">
+                                    -- Durée --
+                                </option>
+
+                                <option value="3 jours">
+                                    3 jours
+                                </option>
+
+                                <option value="5 jours">
+                                    5 jours
+                                </option>
+
+                                <option value="7 jours">
+                                    7 jours
+                                </option>
+
+                                <option value="10 jours">
+                                    10 jours
+                                </option>
+
+                                <option value="15 jours">
+                                    15 jours
+                                </option>
+
+                                <option value="Autre">
+                                    ➕ Autre
+                                </option>
+
+                            </select>
+
+                            <input
+                                type="text"
+                                name="duree_autre[]"
+                                placeholder="Précisez la durée..."
+                                style="
+                                    width: 100%;
+                                    padding: 8px;
+                                    border: 1px solid #cbd5e1;
+                                    border-radius: 6px;
+                                    background: #f8fafc;
+                                "
+                            >
+
+                        </div>
+
+                        <div>
+                            <label style="font-size: 0.85rem; color: #64748b;">
+                                Instructions particulières
+                            </label>
+
+                            <select
+                                name="instructions[]"
+                                style="
+                                    width: 100%;
+                                    padding: 10px;
+                                    border: 1px solid #cbd5e1;
+                                    border-radius: 6px;
+                                    background: #fff;
+                                    margin-bottom: 5px;
+                                "
+                            >
+
+                                <option value="Aucune">
+                                    -- Aucune --
+                                </option>
+
+                                <option value="À prendre pendant les repas">
+                                    À prendre pendant les repas
+                                </option>
+
+                                <option value="En cas de fièvre">
+                                    En cas de fièvre
+                                </option>
+
+                                <option value="Lavage nasal avant les repas">
+                                    Lavage nasal avant les repas
+                                </option>
+
+                                <option value="Autre">
+                                    ➕ Autre
+                                </option>
+
+                            </select>
+
+                            <input
+                                type="text"
+                                name="instructions_autre[]"
+                                placeholder="Précisez les instructions..."
+                                style="
+                                    width: 100%;
+                                    padding: 8px;
+                                    border: 1px solid #cbd5e1;
+                                    border-radius: 6px;
+                                    background: #f8fafc;
+                                "
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+                {% endfor %}
+
+            </div>
+
+            <!-- BOUTON ENREGISTRER -->
+            <button
+                type="submit"
+                class="btn btn-primary"
+                style="width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-weight: 650; cursor: pointer; margin-top: 10px;"
+            >
+                Enregistrer et générer l'ordonnance
+            </button>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Demande de Consultation - صحة صغيري{% endblock %}
+
+{% block content %}
+<section class="container" style="margin-top: 40px; max-width: 600px;">
+    <h2>🩺 Prendre un Rendez-vous</h2>
+    
+    <form action="{{ url_for('liste_medecins') }}" method="POST" style="background: white; padding: 24px; border-radius: 12px; border: 1px solid #e2e8f0; margin-top: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+        
+        {# Jeton CSRF obligatoire pour la soumission sécurisée des formulaires Flask #}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Sélectionner un Médecin :</label>
+            <select name="medecin_id" required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
+                <option value="">-- Choisir un médecin --</option>
+                {% for medecin in medecins %}
+                    <option value="{{ medecin.id }}">Dr. {{ medecin.nom_complet }}</option>
+                {% else %}
+                    <option value="" disabled>Aucun médecin disponible pour le moment</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Concerne l'enfant :</label>
+            {# Ajout du champ required obligatoire pour valider la requête côté backend #}
+            <select name="enfant_id" required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
+                <option value="">-- Sélectionner un enfant --</option>
+                {% for enfant in enfants %}
+                    <option value="{{ enfant.id }}">{{ enfant.prenom }} {{ enfant.nom }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label for="date_rdv" style="display: block; margin-bottom: 5px; font-weight: 500;">Date et Heure souhaitées :</label>
+            <input type="datetime-local" id="date_rdv" name="date_rdv" required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label for="motif" style="display: block; margin-bottom: 5px; font-weight: 500;">Motif de la consultation :</label>
+            <textarea id="motif" name="motif" rows="4" placeholder="Décrivez brièvement le symptôme ou la demande..." required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1;"></textarea>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-weight: 500;">
+                <input type="checkbox" name="urgence" value="on" style="width: 18px; height: 18px;">
+                Demande urgente (ne pas tenir compte des disponibilités)
+            </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Envoyer la demande</button>
+    </form>
+</section>
+{% endblock %}

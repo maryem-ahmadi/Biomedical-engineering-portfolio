@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Carnet de Vaccination - {{ enfant.prenom }} {{ enfant.nom }}{% endblock %}
+
+{% block content %}
+<section class="container" style="max-width: 1000px; margin: 30px auto; padding: 0 15px;">
+
+    <!-- Bouton Retour -->
+    <div style="margin-bottom: 20px;">
+        <a href="{{ url_for('suivi_enfant', enfant_id=enfant.id) }}" class="btn btn-outline" style="text-decoration: none; padding: 8px 16px; border: 1px solid #007bff; color: #007bff; border-radius: 6px; font-weight: 500;">
+            ← Retour au suivi de {{ enfant.prenom }}
+        </a>
+    </div>
+
+    <!-- En-tête Carnet de Santé -->
+    <div style="background: #ffffff; border-radius: 12px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 25px; border-left: 5px solid #007bff;">
+        <h2 style="margin: 0 0 10px 0; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+            💉 Carnet de Vaccination
+        </h2>
+        <p style="margin: 0; color: #64748b; font-size: 1.05rem;">
+            Enfant : <strong>{{ enfant.prenom }} {{ enfant.nom }}</strong> 
+            {% if enfant.date_naissance %}
+                | Date de naissance : <strong>{{ enfant.date_naissance }}</strong>
+            {% endif %}
+        </p>
+    </div>
+
+    <!-- Section Liste des Vaccins -->
+    <div style="background: #ffffff; border-radius: 12px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+        <h3 style="margin-top: 0; margin-bottom: 20px; color: #334155; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">
+            Calendrier Vaccinal
+        </h3>
+
+        {% if vaccins and vaccins|length > 0 %}
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px;">
+                    <thead>
+                        <tr style="background-color: #f8fafc; text-align: left;">
+                            <th style="padding: 14px 16px; color: #475569; font-weight: 600; border-bottom: 2px solid #e2e8f0; min-width: 240px;">Vaccin</th>
+                            <th style="padding: 14px 16px; color: #475569; font-weight: 600; border-bottom: 2px solid #e2e8f0; min-width: 140px;">Date prévue</th>
+                            <th style="padding: 14px 16px; color: #475569; font-weight: 600; border-bottom: 2px solid #e2e8f0; min-width: 130px;">Statut</th>
+                            <th style="padding: 14px 16px; color: #475569; font-weight: 600; border-bottom: 2px solid #e2e8f0; min-width: 160px;">Action</th>
+                            <th style="padding: 14px 16px; color: #475569; font-weight: 600; border-bottom: 2px solid #e2e8f0;">Remarques</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for v in vaccins %}
+                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                            
+                            <!-- Nom du vaccin -->
+                            <td style="padding: 16px; color: #0f172a; font-weight: 600; border-bottom: 1px solid #e2e8f0;">
+                                {{ v.nom_vaccin }}
+                            </td>
+
+                            <!-- Date (conversion explicite DD/MM/YYYY) -->
+                            <td style="padding: 16px; color: #334155; border-bottom: 1px solid #e2e8f0; white-space: nowrap;">
+                                {% if v.date_administration %}
+                                    {% set parts = v.date_administration.split('-') %}
+                                    {% if parts|length == 3 %}
+                                        {{ parts[2] }}/{{ parts[1] }}/{{ parts[0] }}
+                                    {% else %}
+                                        {{ v.date_administration }}
+                                    {% endif %}
+                                {% else %}
+                                    <span style="color: #94a3b8;">Non définie</span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Badge de Statut -->
+                            <td style="padding: 16px; border-bottom: 1px solid #e2e8f0;">
+                                {% if v.statut == 'Administré' or v.statut == 'Effectué' or v.statut == 'Fait' %}
+                                    <span style="background-color: #dcfce7; color: #166534; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; display: inline-block;">
+                                        ✓ Administré
+                                    </span>
+                                {% elif v.statut == 'En retard' %}
+                                    <span style="background-color: #fee2e2; color: #991b1b; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; display: inline-block;">
+                                        ⚠️ En retard
+                                    </span>
+                                {% else %}
+                                    <span style="background-color: #e0f2fe; color: #0369a1; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; display: inline-block;">
+                                        🗓️ Planifié
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Action : Cocher / Décocher -->
+                            <td style="padding: 16px; border-bottom: 1px solid #e2e8f0;">
+                                <form action="{{ url_for('cocher_vaccin', vaccin_id=v.id) }}" method="POST" style="margin:0;">
+                                    {% if v.statut == 'Administré' or v.statut == 'Effectué' or v.statut == 'Fait' %}
+                                        <input type="hidden" name="is_done" value="false">
+                                        <button type="submit" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; cursor: pointer;">
+                                            Annuler
+                                        </button>
+                                    {% else %}
+                                        <input type="hidden" name="is_done" value="true">
+                                        <button type="submit" style="background: #22c55e; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 500; cursor: pointer;">
+                                            ✓ Marquer fait
+                                        </button>
+                                    {% endif %}
+                                </form>
+                            </td>
+
+                            <!-- Remarques -->
+                            <td style="padding: 16px; color: #64748b; border-bottom: 1px solid #e2e8f0; font-size: 0.95rem;">
+                                {{ v.remarques if v.remarques else '-' }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 40px 20px; color: #64748b;">
+                <p style="font-size: 1.1rem; margin-bottom: 10px;">Aucun vaccin enregistré pour le moment.</p>
+            </div>
+        {% endif %}
+    </div>
+
+</section>
+{% endblock %}

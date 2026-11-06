@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Inscription - صحة صغيري{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="container">
+        <div class="auth-card">
+            <h2>Créer un compte</h2>
+            <p class="auth-subtitle">Rejoignez صحة صغيري pour un meilleur suivi médical</p>
+
+            <form action="{{ url_for('inscription') }}" method="POST" class="auth-form">
+                <div class="form-group">
+                    <label>Inscrire en tant que :</label>
+                    <div class="role-selector">
+                        <label class="role-option">
+                            <input type="radio" name="role" value="maman" checked>
+                            <span>👩‍👧 Maman</span>
+                        </label>
+                        <label class="role-option">
+                            <input type="radio" name="role" value="medecin">
+                            <span>🩺 Médecin</span>
+                        </label>
+                        <label class="role-option">
+                            <input type="radio" name="role" value="admin">
+                            <span>⚙️ Admin</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="nom_complet">Nom et Prénom</label>
+                    <input type="text" id="nom_complet" name="nom_complet" placeholder="Ex: Amina Ben Ali" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Adresse Email</label>
+                    <input type="email" id="email" name="email" placeholder="exemple@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Créer mon compte</button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Vous avez déjà un compte ? <a href="{{ url_for('connexion') }}">Se connecter</a></p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

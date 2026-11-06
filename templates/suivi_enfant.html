@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}Suivi de {{ enfant.prenom }} {{ enfant.nom }}{% endblock %}
+
+{% block content %}
+<section class="container" style="margin-top: 30px; margin-bottom: 50px; max-width: 800px;">
+
+    <!-- BOUTON RETOUR -->
+    <a href="{{ url_for('dashboard') }}" class="btn btn-outline" style="margin-bottom: 20px; text-decoration: none; display: inline-block;">← Retour au tableau de bord</a>
+
+<!-- EN-TÊTE ENFANT -->
+<div style="background: white; padding: 24px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+    <div>
+        <h2 style="margin: 0 0 8px 0;">Suivi de : {{ enfant.prenom }} {{ enfant.nom }}</h2>
+        <p style="color: #64748b; margin: 0;">
+            Poids actuel : <strong>{{ enfant.poids if enfant.poids is not none else 'N/C' }} kg</strong> | 
+            Taille actuelle : <strong>{{ enfant.taille if enfant.taille is not none else 'N/C' }} cm</strong>
+        </p>
+    </div>
+    <div>
+        <a href="{{ url_for('voir_vaccins_enfant', enfant_id=enfant.id) }}" class="btn btn-primary" style="padding: 10px 16px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+            💉 Carnet de vaccination
+        </a>
+    </div>
+</div>
+
+    <!-- SECTIONS DE SUIVI -->
+    
+    <!-- 1. CROISSANCE (POIDS / TAILLE) -->
+    <div style="background: white; padding: 24px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+        <h3 style="margin-top: 0; margin-bottom: 15px;">📈  Suivi de croissance</h3>
+        {% if croissances %}
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                <thead>
+                    <tr style="text-align: left; color: #64748b; border-bottom: 2px solid #e2e8f0;">
+                        <th style="padding: 8px;">Date</th>
+                        <th style="padding: 8px;">Poids</th>
+                        <th style="padding: 8px;">Taille</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in croissances %}
+                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                            <td style="padding: 8px;">{{ m.date_mesure }}</td>
+                            <td style="padding: 8px; font-weight: 500;">{{ m.poids }} kg</td>
+                            <td style="padding: 8px; font-weight: 500;">{{ m.taille }} cm</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p style="color: #64748b; margin: 0;">Aucune mesure enregistrée pour le moment.</p>
+        {% endif %}
+    </div>
+
+    <!-- 2. RECOMMANDATIONS MÉDICALES -->
+    <div style="background: white; padding: 24px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+        <h3 style="margin-top: 0; margin-bottom: 15px;">📝 Recommandations du médecin</h3>
+        {% if recommandations %}
+            {% for r in recommandations %}
+                <div style="border-top: 1px solid #f1f5f9; padding: 12px 0;">
+                    <p style="margin: 0 0 4px 0; font-size: 0.85rem; color: #64748b;">
+                        📅 {{ r.date }} — <strong>Dr. {{ r.medecin.nom_complet if r.medecin else 'Médecin' }}</strong>
+                    </p>
+                    <p style="margin: 0; color: #334155; line-height: 1.5;">{{ r.conseil }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p style="color: #64748b; margin: 0;">Aucune recommandation enregistrée.</p>
+        {% endif %}
+    </div>
+
+    <!-- 3. ORDONNANCES ET SUIVI DES MÉDICAMENTS -->
+    <div style="background: white; padding: 24px; border-radius: 12px; border: 1px solid #e2e8f0;">
+        <h3 style="margin-top: 0; margin-bottom: 15px;">💊 Ordonnances &amp; Traitements</h3>
+        {% if ordonnances %}
+            {% for o in ordonnances %}
+                <div style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; margin-bottom: 15px; background: #fafafa;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 12px;">
+                        <div>
+                            <span style="font-weight: 600; color: #1e293b;">Ordonnance du {{ o.date_creation }}</span>
+                            <span style="font-size: 0.85rem; color: #64748b; margin-left: 8px;">(Prescrit par Dr. {{ o.medecin.nom_complet if o.medecin else 'Médecin' }})</span>
+                        </div>
+                        <a href="{{ url_for('voir_ordonnance', ordonnance_id=o.id) }}" style="font-size: 0.85rem; color: #2563eb; text-decoration: none; font-weight: 500;">
+                            📄 Voir / Imprimer l'ordonnance
+                        </a>
+                    </div>
+
+                    {% if o.lignes %}
+                        {% for ligne in o.lignes %}
+                            <div style="padding: 10px 0; font-size: 0.9rem; border-bottom: 1px dashed #e2e8f0;">
+                                
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+                                    <div>
+                                        <strong style="color: #0f172a;">{{ ligne.nom_medicament }}</strong> — {{ ligne.posologie }}, {{ ligne.frequence }}, {{ ligne.duree }}
+                                        {% if ligne.instructions %}
+                                            <br><span style="color: #64748b; font-size: 0.85rem;">📋 Instructions : {{ ligne.instructions }}</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- Statut pour le médecin/admin -->
+                                    {% if session.get('user_role') != 'maman' %}
+                                        <div>
+                                            {% if ligne.statut_suivi == 'Terminé' %}
+                                                <span style="color: #16a34a; font-weight: 600; font-size: 0.85rem; background: #f0fdf4; padding: 4px 8px; border-radius: 6px;">✅ Terminé</span>
+                                            {% else %}
+                                                <span style="color: #2563eb; font-weight: 600; font-size: 0.85rem; background: #eff6ff; padding: 4px 8px; border-radius: 6px;">🟢 En cours</span>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Formulaire Maman : Mise à jour du traitement -->
+                                {% if session.get('user_role') == 'maman' %}
+                                    <form method="POST" action="{{ url_for('modifier_statut_medicament', ligne_id=ligne.id) }}" style="margin-top: 10px; background: white; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;">
+                                        {% if csrf_token %}
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                        {% endif %}
+                                        
+                                        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px; flex-wrap: wrap;">
+                                            <label style="font-weight: 600; font-size: 0.85rem; color: #475569;">Statut du traitement :</label>
+                                            <select name="statut_suivi" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; cursor: pointer; background: white;">
+                                                <option value="En cours" {% if ligne.statut_suivi == 'En cours' %}selected{% endif %}>🟢 En cours</option>
+                                                <option value="Terminé" {% if ligne.statut_suivi == 'Terminé' %}selected{% endif %}>✅ Terminé</option>
+                                            </select>
+                                        </div>
+
+                                        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                                            <input type="text" 
+                                                   name="remarque_maman" 
+                                                   placeholder="Remarque (ex: tolérance, effet secondaire, oubli...)" 
+                                                   value="{{ ligne.remarque_maman or '' }}" 
+                                                   style="flex: 1; min-width: 200px; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem;">
+                                            
+                                            <button type="submit" class="btn" style="padding: 6px 12px; font-size: 0.85rem; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                                                Mettre à jour
+                                            </button>
+                                        </div>
+                                    </form>
+                                {% else %}
+                                    <!-- Affichage de la remarque pour le médecin -->
+                                    {% if ligne.remarque_maman %}
+                                        <div style="margin-top: 6px; font-size: 0.85rem; background: #fffbebfb; color: #b45309; padding: 6px 10px; border-radius: 6px; border: 1px solid #fef3c7;">
+                                            💬 <strong>Remarque maman :</strong> {{ ligne.remarque_maman }}
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p style="color: #94a3b8; font-size: 0.85rem; margin: 0;">Aucun médicament renseigné sur cette ordonnance.</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <p style="color: #64748b; margin: 0;">Aucune ordonnance enregistrée.</p>
+        {% endif %}
+    </div>
+
+</section>
+{% endblock %}

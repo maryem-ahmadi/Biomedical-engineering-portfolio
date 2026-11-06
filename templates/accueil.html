@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}صحة صغيري - Accueil{% endblock %}
+
+{% block content %}
+    <!-- SECTION HERO -->
+    <section class="hero hero-section">
+        <div class="container hero-container">
+            <div class="hero-content">
+                <span class="badge badge-sky">
+                    <span class="pulse-dot"></span> Accompagnement & Orientation Pédiatrique
+                </span>
+                <h1 class="hero-title">Prenez soin de la santé de votre enfant en toute sérénité</h1>
+                <p class="hero-description">
+                    Un espace bienveillant pour suivre la croissance, garder un œil sur le calendrier vaccinal et échanger avec notre assistant virtuel intelligent.
+                </p>
+                <div class="hero-actions">
+                    <a href="{{ url_for('inscription') if 'inscription' in endpoints else '/inscription' }}" class="btn btn-primary btn-lg shadow-sm">
+                        Commencer maintenant
+                    </a>
+                    <a href="#fonctionnalites" class="btn btn-secondary btn-lg">
+                        Découvrir l'application
+                    </a>
+                </div>
+            </div>
+            
+            <div class="hero-card-illustration">
+                <div class="medical-card-preview platform-card main-preview-card">
+                    <div class="preview-header">
+                        <div class="preview-icon icon-emerald">🩺</div>
+                        <span class="status-pill status-online">
+                            <span class="dot green"></span> En ligne
+                        </span>
+                    </div>
+                    <h3>Suivi Pédiatrique Intelligent</h3>
+                    <p>Conseils personnalisés & pré-orientation pour votre enfant.</p>
+                    <div class="preview-footer">
+                        <span class="footer-tag">IA Médicale v2.0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION FONCTIONNALITÉS -->
+    <section id="fonctionnalites" class="features container">
+        <div class="section-title text-center">
+            
+            <h2>Une solution complète pour la santé des plus petits</h2>
+            <p>Pensée pour simplifier le quotidien des parents et faciliter le travail des professionnels de santé.</p>
+        </div>
+
+        <div class="features-grid">
+            <!-- Carte 1 : Profil & Carnet -->
+            <div class="feature-card card-blue">
+                <div class="card-header">
+                    <div class="card-icon blue">📋</div>
+                    <span class="card-badge">Espace Maman</span>
+                </div>
+                <h3>Profil & Carnet de Santé</h3>
+                <p>Enregistrez le profil de votre enfant, son poids, sa taille et ses antécédents médicaux importants.</p>
+            </div>
+
+            <!-- Carte 2 : Assistant IA -->
+            <div class="feature-card card-emerald">
+                <div class="card-header">
+                    <div class="card-icon green">💬</div>
+                    <span class="card-badge">IA Interactive</span>
+                </div>
+                <h3>Assistant Médical IA</h3>
+                <p>Posez vos questions sur la fièvre, la toux ou le sommeil. Notre chatbot vous aide à évaluer les symptômes.</p>
+            </div>
+
+            <!-- Carte 3 : Vaccinations -->
+            <div class="feature-card card-purple">
+                <div class="card-header">
+                    <div class="card-icon purple">💉</div>
+                    <span class="card-badge">Rappels Automatises</span>
+                </div>
+                <h3>Suivi des Vaccinations</h3>
+                <p>Ne ratez aucun rappel. Consultez les vaccins prévus, faits ou à venir selon le calendrier médical.</p>
+            </div>
+
+            <!-- Carte 4 : Espace Pro -->
+            <div class="feature-card card-amber" id="medecin">
+                <div class="card-header">
+                    <div class="card-icon teal">🩺</div>
+                    <span class="card-badge">Espace Médecin</span>
+                </div>
+                <h3>Espace Professionnel</h3>
+                <p>Les médecins partenaires peuvent consulter l'historique pertinent et les alertes pour un accompagnement ciblé.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- BANNIÈRE AVERTISSEMENT -->
+    <section class="disclaimer-banner">
+        <div class="container">
+            <div class="disclaimer-box warning-card">
+                <div class="warning-icon-wrapper">
+                    <span class="warning-icon">⚠️</span>
+                </div>
+                <div class="warning-content">
+                    <h4>Avertissement important</h4>
+                    <p>Notre chatbot est un outil d'information et d'assistance. Il ne remplace en aucun cas un avis médical professionnel ou une consultation aux urgences.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

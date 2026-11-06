@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Connexion - صحة صغيري{% endblock %}
+
+{% block content %}
+<div style="max-width: 450px; margin: 40px auto; padding: 30px; background: #ffffff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); font-family: system-ui, -apple-system, sans-serif;">
+    
+    <div style="text-align: center; margin-bottom: 25px;">
+        <h2 style="color: #007bff; margin-bottom: 8px; font-weight: bold;">Connexion</h2>
+        <p style="color: #6c757d; font-size: 14px; margin: 0;">Accédez à votre espace صحة صغيري</p>
+    </div>
+
+    <form action="{{ url_for('connexion') }}" method="POST">
+        
+        <!-- Sélection du Rôle -->
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; font-weight: bold; margin-bottom: 10px; color: #333;">Vous êtes :</label>
+            <div style="display: flex; gap: 10px; justify-content: space-between;">
+                
+                <label style="flex: 1; border: 1px solid #ced4da; padding: 10px 5px; border-radius: 8px; text-align: center; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 14px;">
+                    <input type="radio" name="role" value="maman" checked style="accent-color: #007bff;">
+                    <span>🤱 Maman</span>
+                </label>
+
+                <label style="flex: 1; border: 1px solid #ced4da; padding: 10px 5px; border-radius: 8px; text-align: center; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 14px;">
+                    <input type="radio" name="role" value="medecin" style="accent-color: #007bff;">
+                    <span>🩺 Médecin</span>
+                </label>
+
+                <label style="flex: 1; border: 1px solid #ced4da; padding: 10px 5px; border-radius: 8px; text-align: center; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 14px;">
+                    <input type="radio" name="role" value="admin" style="accent-color: #007bff;">
+                    <span>⚙️ Admin</span>
+                </label>
+
+            </div>
+        </div>
+
+        <!-- Champ Email -->
+        <div style="margin-bottom: 15px;">
+            <label for="email" style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">Adresse Email</label>
+            <input type="email" id="email" name="email" placeholder="exemple@email.com" required 
+                   style="width: 100%; padding: 10px 12px; border: 1px solid #ced4da; border-radius: 8px; box-sizing: border-box; font-size: 14px;">
+        </div>
+
+        <!-- Champ Mot de passe -->
+        <div style="margin-bottom: 20px;">
+            <label for="password" style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">Mot de passe</label>
+            <input type="password" id="password" name="password" placeholder="••••••••" required 
+                   style="width: 100%; padding: 10px 12px; border: 1px solid #ced4da; border-radius: 8px; box-sizing: border-box; font-size: 14px;">
+        </div>
+
+        <!-- Bouton de connexion -->
+        <button type="submit" 
+                style="width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer;">
+            Se connecter
+        </button>
+
+    </form>
+
+    <div style="text-align: center; margin-top: 20px; font-size: 14px; color: #6c757d;">
+        Vous n'avez pas encore de compte ? 
+        <a href="{{ url_for('inscription') }}" style="color: #007bff; text-decoration: none; font-weight: bold;">S'inscrire</a>
+    </div>
+
+</div>
+{% endblock %}

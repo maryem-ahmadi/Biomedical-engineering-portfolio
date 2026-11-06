@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Mes Disponibilités - صحة صغيري{% endblock %}
+
+{% block content %}
+<section class="container" style="margin-top: 40px; max-width: 700px;">
+    <h2>📅 Mes disponibilités</h2>
+
+    <form method="POST" style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin: 20px 0;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+            <div>
+                <label style="display: block; font-weight: 600; margin-bottom: 6px;">Début</label>
+                <input type="datetime-local" name="date_debut" required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
+            </div>
+            <div>
+                <label style="display: block; font-weight: 600; margin-bottom: 6px;">Fin</label>
+                <input type="datetime-local" name="date_fin" required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
+            </div>
+        </div>
+        <div style="margin-bottom: 10px;">
+            <label style="display: block; font-weight: 600; margin-bottom: 6px;">Type</label>
+            <select name="type_dispo" required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
+                <option value="normal">Normal</option>
+                <option value="garde_nuit">Garde de nuit</option>
+                <option value="dimanche">Dimanche / garde</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Ajouter ce créneau</button>
+    </form>
+
+    {% if disponibilites %}
+        {% for dispo in disponibilites %}
+            <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong>Du {{ dispo.date_debut }}</strong><br>
+                    <span style="color: #64748b;">au {{ dispo.date_fin }}</span><br>
+                    <span style="font-size: 0.8rem; color: #2563eb;">{{ dispo.type_dispo }}</span>
+                </div>
+                <form method="POST" action="{{ url_for('supprimer_disponibilite', dispo_id=dispo.id) }}" style="display: inline;">
+                    <button type="submit" class="btn btn-outline" style="border-color: #ef4444; color: #ef4444;">Supprimer</button>
+                </form>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p style="color: #64748b;">Aucun créneau défini pour le moment.</p>
+    {% endif %}
+</section>
+{% endblock %}

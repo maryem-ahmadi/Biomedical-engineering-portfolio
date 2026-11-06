@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2><i class="fas fa-stethoscope text-primary"></i> Demander une Consultation Pédiatriques</h2>
+    <p class="text-muted">Choisissez un médecin et planifiez une consultation pour votre enfant.</p>
+
+    <div class="row mt-4">
+        {% for medecin in medecins %}
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-1 text-primary">Dr. {{ medecin.nom_complet }}</h5>
+                        <p class="mb-0 text-muted">
+                            {{ medecin.specialite if medecin.specialite else 'Pédiatre' }} • {{ medecin.email }}
+                        </p>
+                    </div>
+                    <div>
+                        {% if enfants %}
+                            <a href="{{ url_for('confirmer_rdv', medecin_id=medecin.id) }}" class="btn btn-outline-primary">
+                                Réserver
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('ajouter_enfant') }}" class="btn btn-outline-warning">
+                                Ajoutez d'abord un enfant
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <p class="alert alert-info">Aucun médecin n'est disponible pour le moment.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="mt-3">
+        <a href="{{ url_for('dashboard') }}" class="text-decoration-none">← Revenir au tableau de bord</a>
+    </div>
+</div>
+{% endblock %}
